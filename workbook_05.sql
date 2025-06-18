@@ -1,0 +1,63 @@
+--1번
+
+INSERT INTO TB_CLASS_TYPE VALUES('01', '전공필수');
+INSERT INTO TB_CLASS_TYPE VALUES('02', '전공선택');
+INSERT INTO TB_CLASS_TYPE VALUES('03', '교양필수');
+INSERT INTO TB_CLASS_TYPE VALUES('04', '교양선택');
+INSERT INTO TB_CLASS_TYPE VALUES('05', '논문지도');
+COMMIT;
+
+--2번
+
+CREATE TABLE TB_학생일반정보
+AS SELECT STUDENT_NO AS "학번",
+          STUDENT_NAME AS "학생이름",
+          STUDENT_ADDRESS AS "주소"
+FROM TB_STUDENT;
+
+--3번
+
+
+--4번
+
+UPDATE TB_DEPARTMENT
+  SET CAPACITY = ROUND(CAPACITY * 1.1, 0);
+  
+--5번 
+UPDATE TB_STUDENT
+    SET STUDENT_ADDRESS = '서울시 종로구 숭인동 181-21'
+    WHERE STUDENT_NO = 'A413042';
+    
+    
+--6번
+UPDATE TB_STUDENT
+    SET STUDENT_SSN = SUBSTR(STUDENT_SSN, 1, 6);
+    COMMIT;
+--7번
+UPDATE TB_GRADE
+ SET POINT = '3.5'
+ WHERE TERM_NO = '200501'
+ AND STUDENT_NO = (SELECT STUDENT_NO
+                     FROM TB_STUDENT S
+                     JOIN TB_DEPARTMENT D ON (S.DEPARTMENT_NO = D.DEPARTMENT_NO)
+                     WHERE S.STUDENT_NAME = '김명훈'
+                     AND D.DEPARTMENT_NAME = '의학과'
+                     )
+AND CLASS_NO = (SELECT CLASS_NO
+                     FROM TB_CLASS
+                    WHERE CLASS_NAME = '피부생리학');
+                    
+SELECT STUDENT_NAME, CLASS_NAME, POINT
+FROM TB_GRADE
+JOIN TB_STUDENT USING(STUDENT_NO)
+JOIN TB_CLASS USING(CLASS_NO)
+WHERE STUDENT_NAME = '김명훈'
+AND CLASS_NAME = '피부생리학';
+
+--8번
+DELETE FROM TB_GRADE
+WHERE STUDENT_NO IN (SELECT 
+                            STUDENT_NO 
+                       FROM TB_STUDENT
+                       WHERE ABSENCE_YN = 'Y'
+                       );
